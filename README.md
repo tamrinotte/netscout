@@ -33,11 +33,11 @@ __--port PORT:__ Port number (e.g., 1005).
 
 __--port-range PORT:__ Port range (e.g., 0-4000).
 
-__--st:__ Scan for open TCP ports on the target.
+__-st:__ Scan for open TCP ports on the target.
 
-__--su:__ Scan for open UDP ports on the target.
+__-su:__ Scan for open UDP ports on the target.
 
-__--sa:__ Perform an ARP scan to discover hosts on the local network.
+__-sa:__ Perform an ARP scan to discover hosts on the local network.
 
 <br>
 
@@ -95,11 +95,11 @@ __--port PORT:__ Bağlantı noktası numarası (ör. 1005).
 
 __--port-range PORT:__ Bağlantı noktası aralığı (ör. 0-4000).
 
-__--st:__ Hedefteki açık TCP bağlantı noktalarını tarayın.
+__-st:__ Hedefteki açık TCP bağlantı noktalarını tarayın.
 
-__--su:__ Hedefteki açık UDP bağlantı noktalarını tarayın.
+__-su:__ Hedefteki açık UDP bağlantı noktalarını tarayın.
 
-__--sa:__ Yerel ağdaki ana bilgisayarları keşfetmek için bir ARP taraması gerçekleştirin.
+__-sa:__ Yerel ağdaki ana bilgisayarları keşfetmek için bir ARP taraması gerçekleştirin.
 
 <br>
 
