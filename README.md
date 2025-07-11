@@ -1,7 +1,7 @@
 # NetScout
 ![NetScout](https://raw.githubusercontent.com/tamrinotte/netscout/python/app_images/netscout_logo.png)
 
-NetScout is a port scanning tool that checks TCP ports on a specified IP address or range. It supports scanning single ports or port ranges, identifies open ports, and attempts to determine the associated service name. The tool runs scans concurrently for speed and provides a summary of open ports along with scan duration.
+NetScout is a port scanning tool that checks ports on a specified IP address or range. It supports scanning single ports or port ranges, identifies open ports, and attempts to determine the associated service name. The tool runs scans concurrently for speed and provides a summary of open ports along with scan duration.
 
 <br>
 
@@ -96,3 +96,4 @@ __--port-range PORT:__ Bağlantı noktası aralığı (ör. 0-4000).
 
 3)
        netscout 10.10.10.10 --port-range 0-4000
+
