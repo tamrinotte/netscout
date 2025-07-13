@@ -18,7 +18,7 @@ from time import time
 
 ##############################
 
-def icmp_listener(target_ip, closed_ports, stop_event, new_response_event):
+def icmp_listener(target_ip, closed_ports, stop_event, new_response_event, closed_ports_lock):
     try:
         sock = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP)
         sock.settimeout(1)
@@ -40,6 +40,7 @@ def icmp_listener(target_ip, closed_ports, stop_event, new_response_event):
             if not packet:
                 continue
 
+            # Parse ICMP header
             icmp_header = packet[20:28]
             icmp_type, icmp_code, _, _, _ = unpack('bbHHh', icmp_header)
 
@@ -54,7 +55,8 @@ def icmp_listener(target_ip, closed_ports, stop_event, new_response_event):
                 src_port, dst_port, _, _ = unpack('!HHHH', udp_header)
 
                 if addr[0] == target_ip:
-                    closed_ports.add(dst_port)
+                    with closed_ports_lock:
+                        closed_ports.add(dst_port)
                     new_response_event.set()  # Notify main thread
                     debug(f"ICMP Port Unreachable received for port {dst_port}")
 

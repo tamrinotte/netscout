@@ -119,22 +119,45 @@ def grab_service_banner(sock, timeout=2, port=None, protocol="tcp"):
     try:
         sock.settimeout(timeout)
         probe = None
-        if port is not None:
-            probe_data = find_probe(port, protocol)
-            if probe_data:
-                probe = probe_data["probe_payload"]
-                debug(f"Sending probe payload for {protocol.upper()} port {port}: {probe.strip()}")
+
+        # For HTTP(S) ports, send explicit GET request to get headers only
+        if port in (80, 443) and protocol.lower() == "tcp":
+            probe = "GET / HTTP/1.0\r\n\r\n"
+            debug(f"Sending HTTP GET probe for port {port}")
+
+        else:
+            if port is not None:
+                probe_data = find_probe(port, protocol)
+                if probe_data:
+                    probe = probe_data["probe_payload"]
+                    debug(f"Sending probe payload for {protocol.upper()} port {port}: {probe.strip()}")
 
         if probe:
             sock.sendall(probe.encode())
 
-        try:
-            data = sock.recv(1024)
-            banner = data.decode(errors='ignore').strip()
-            if banner:
-                debug(f"Received banner: {banner}")
-        except Exception:
-            debug("No banner received.")
+        data_chunks = []
+        while True:
+            try:
+                data = sock.recv(4096)
+                if not data:
+                    break
+                data_chunks.append(data)
+            except Exception:
+                break
+
+        if data_chunks:
+            full_banner = b"".join(data_chunks).decode(errors='ignore').strip()
+            debug(f"Received full banner:\n{full_banner}")
+
+            # For HTTP, extract headers (everything before first double CRLF)
+            if port in (80, 443) and protocol.lower() == "tcp":
+                header_end = full_banner.find("\r\n\r\n")
+                if header_end != -1:
+                    banner = full_banner[:header_end].strip()
+                else:
+                    banner = full_banner  # fallback: entire banner if no header boundary found
+            else:
+                banner = full_banner
 
         info("Banner grabbing completed.")
 

@@ -1,6 +1,54 @@
 [
   {
     "protocol": "tcp",
+    "port": 21,
+    "probe_name": "ftp_helo",
+    "probe_payload": "USER anonymous\\r\\n",
+    "expected_responses": ["220.*FTP"],
+    "notes": "FTP login probe"
+  },
+  {
+    "protocol": "tcp",
+    "port": 22,
+    "probe_name": "ssh_version",
+    "probe_payload": "",
+    "expected_responses": ["^SSH-"],
+    "notes": "SSH version banner"
+  },
+  {
+    "protocol": "tcp",
+    "port": 23,
+    "probe_name": "telnet_options",
+    "probe_payload": "\\xff\\xfd\\x18\\xff\\xfd\\x20\\xff\\xfd\\x27",
+    "expected_responses": [".*"],
+    "notes": "Telnet option negotiation"
+  },
+  {
+    "protocol": "tcp",
+    "port": 25,
+    "probe_name": "smtp_helo",
+    "probe_payload": "HELO example.com\\r\\n",
+    "expected_responses": ["^220", "^250"],
+    "notes": "SMTP HELO command"
+  },
+  {
+    "protocol": "tcp",
+    "port": 53,
+    "probe_name": "dns_tcp_query",
+    "probe_payload": "\\x00\\x00\\x01\\x00\\x00\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x03www\\x06google\\x03com\\x00\\x00\\x01\\x00\\x01",
+    "expected_responses": [".*"],
+    "notes": "Standard DNS TCP query"
+  },
+  {
+    "protocol": "udp",
+    "port": 53,
+    "probe_name": "dns_udp_query",
+    "probe_payload": "\\x12\\x34\\x01\\x00\\x00\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x03www\\x06google\\x03com\\x00\\x00\\x01\\x00\\x01",
+    "expected_responses": [".*"],
+    "notes": "Standard DNS UDP query"
+  },
+  {
+    "protocol": "tcp",
     "port": 80,
     "probe_name": "http_get",
     "probe_payload": "GET / HTTP/1.0\\r\\n\\r\\n",
@@ -8,19 +56,83 @@
     "notes": "Basic HTTP GET request"
   },
   {
-    "protocol": "udp",
-    "port": 53,
-    "probe_name": "dns_query",
-    "probe_payload": "\\x12\\x34\\x01\\x00\\x00\\x01\\x00\\x00\\x00\\x00\\x00\\x00\\x03www\\x06google\\x03com\\x00\\x00\\x01\\x00\\x01",
-    "expected_responses": [],
-    "notes": "Standard DNS query"
+    "protocol": "tcp",
+    "port": 110,
+    "probe_name": "pop3_banner",
+    "probe_payload": "",
+    "expected_responses": ["\\+OK.*POP3"],
+    "notes": "POP3 server greeting"
   },
   {
     "protocol": "tcp",
-    "port": 21,
-    "probe_name": "ftp_helo",
-    "probe_payload": "USER anonymous\\r\\n",
-    "expected_responses": ["220.*FTP"],
-    "notes": "FTP login probe"
+    "port": 143,
+    "probe_name": "imap_banner",
+    "probe_payload": "A001 CAPABILITY\\r\\n",
+    "expected_responses": ["\\* CAPABILITY"],
+    "notes": "IMAP CAPABILITY command"
+  },
+  {
+    "protocol": "tcp",
+    "port": 443,
+    "probe_name": "https_get",
+    "probe_payload": "GET / HTTP/1.0\\r\\n\\r\\n",
+    "expected_responses": ["HTTP/1\\.[01] \\d{3}"],
+    "notes": "Basic HTTPS GET request"
+  },
+  {
+    "protocol": "tcp",
+    "port": 3306,
+    "probe_name": "mysql_hello",
+    "probe_payload": "",
+    "expected_responses": ["mysql_native_password", "MySQL"],
+    "notes": "MySQL handshake greeting"
+  },
+  {
+    "protocol": "tcp",
+    "port": 3389,
+    "probe_name": "rdp_hello",
+    "probe_payload": "\\x03\\x00\\x00\\x0b\\x06\\xd0\\x00\\x00\\x12\\x34\\x00",
+    "expected_responses": ["RDP", "rdp"],
+    "notes": "RDP protocol negotiation"
+  },
+  {
+    "protocol": "tcp",
+    "port": 5900,
+    "probe_name": "vnc_protocol_version",
+    "probe_payload": "",
+    "expected_responses": ["^RFB"],
+    "notes": "VNC protocol version banner"
+  },
+  {
+    "protocol": "tcp",
+    "port": 6379,
+    "probe_name": "redis_ping",
+    "probe_payload": "*1\\r\\nPING\\r\\n",
+    "expected_responses": ["+PONG"],
+    "notes": "Redis ping command"
+  },
+  {
+    "protocol": "tcp",
+    "port": 27017,
+    "probe_name": "mongodb_hello",
+    "probe_payload": "\\x00\\x00\\x00\\x00",
+    "expected_responses": ["MongoDB", "mongod"],
+    "notes": "MongoDB handshake"
+  },
+  {
+    "protocol": "tcp",
+    "port": 139,
+    "probe_name": "smb_negotiate",
+    "probe_payload": "\\x00\\x00\\x00\\x85\\xffSMB\\x72\\x00\\x00\\x00\\x00\\x18\\x07\\xc8\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00",
+    "expected_responses": ["SMB"],
+    "notes": "SMB negotiate protocol request"
+  },
+  {
+    "protocol": "tcp",
+    "port": 445,
+    "probe_name": "smb_direct",
+    "probe_payload": "\\x00\\x00\\x00\\x90\\xffSMB\\x72\\x00\\x00\\x00\\x00\\x18\\x07\\xc8\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00\\x00",
+    "expected_responses": ["SMB"],
+    "notes": "SMB direct over TCP"
   }
 ]

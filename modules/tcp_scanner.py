@@ -32,7 +32,8 @@ def run_tcp_scan_port(target_ip, port, timeout=2):
             if result == 0:
                 is_open = True
                 service_name = lookup_service_name(port, protocol_name)
-                banner = grab_service_banner(sock, timeout, protocol="tcp")
+                # Pass port so banner grabber sends HTTP GET on 80 etc.
+                banner = grab_service_banner(sock, timeout, port=port, protocol="tcp")
 
     except socket_error as se:
         error(f"Socket error on port {port}: {se}")
