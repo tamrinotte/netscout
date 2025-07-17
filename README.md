@@ -31,7 +31,7 @@ __ip_address:__ Target IP address (e.g., 10.10.10.10 or 192.168.1.0/24).
 
 __-p PORT, --port PORT:__ Port number (e.g., 1005).
 
-__-pr MIN-MAX --port-range MIN-MAX:__ Port range (e.g., 0-4000).
+__-pr START-END --port-range START-END:__ Port range (e.g., 0-4000).
 
 __-st:__ Scan for open TCP ports on the target.
 
@@ -93,7 +93,7 @@ __ip_address:__ Hedef IP adresi (ör. 10.10.10.10 veya 192.168.1.0/24).
 
 __-p PORT, --port PORT:__ Bağlantı noktası numarası (ör. 1005).
 
-__-pr MIN-MAX, --port-range MIN-MAX:__ Bağlantı noktası aralığı (ör. 0-4000).
+__-pr START-END, --port-range START-END:__ Bağlantı noktası aralığı (ör. 0-4000).
 
 __-st:__ Hedefteki açık TCP bağlantı noktalarını tarayın.
 
