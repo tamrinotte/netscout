@@ -6,6 +6,7 @@ from logging import debug, info, error
 from threading import Lock
 from csv import DictReader
 from json import load as jsonload
+from pathlib import Path
 
 ##############################
 
@@ -17,6 +18,9 @@ _services = {}
 _services_loaded = False
 _services_lock = Lock()
 _probes = None
+base_dir = Path(__file__).parent.parent
+service_names_port_numbers_file_path = Path(base_dir, "data", "service-names-port-numbers.csv")
+service_probes_file_path = Path(base_dir, "data", "service-probes.json")
 
 ##############################
 
@@ -24,7 +28,7 @@ _probes = None
 
 ##############################
 
-def load_iana_services(path="data/service-names-port-numbers.csv"):
+def load_iana_services(path=service_names_port_numbers_file_path):
     global _services, _services_loaded
     with _services_lock:
         if _services_loaded:
@@ -82,7 +86,7 @@ def lookup_service_name(port, protocol="tcp"):
 
 ##############################
 
-def load_probes(path="data/service-probes.json"):
+def load_probes(path=service_probes_file_path):
     global _probes
     if _probes is not None:
         return _probes

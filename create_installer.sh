@@ -26,31 +26,35 @@ fi
 for dir in "${BUILD_DIRS[@]}"; do
     if [[ -d "$dir" ]]; then
         info "Removing existing directory: $dir"
-        rm -rf "$dir"
+        sudo rm -rf "$dir"
     fi
 done
 
 if [[ -f "$INSTALLER" ]]; then
     info "Removing existing installer: $INSTALLER"
-    rm -f "$INSTALLER"
+    sudo rm -f "$INSTALLER"
 fi
 
 # Create executable
 info "Creating standalone executable using PyInstaller..."
-pyinstaller --onefile --name=$APP_NAME $APP_NAME.py
+pyinstaller $APP_NAME.spec
 
 # Setup package structure
 info "Creating package directory hierarchy..."
+mkdir -p "package/opt"
 mkdir -p "package/usr/bin"
 
-# Move executable
-info "Copying executable to package directory..."
-cp "dist/${APP_NAME}" "package/usr/bin/"
+# Copy required files and folders into the package
+echo 'Copying the executable application into package/opt/'
+sudo cp -r dist/netscout package/opt/
+
+echo 'Copying the launcher file into package/usr/bin/'
+ln -s /opt/netscout/netscout package/usr/bin/netscout
 
 # Set permissions and ownership
 info "Setting permissions and ownership for package directory..."
-chmod 755 -R "package/"
-chown "${USERNAME}:${USERNAME}" -R "package/"
+sudo chmod 755 -R "package/"
+sudo chown "${USERNAME}:${USERNAME}" -R "package/"
 
 # Build Debian installer with FPM
 info "Creating Debian installer with FPM..."

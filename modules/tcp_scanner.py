@@ -77,7 +77,7 @@ def run_tcp_scan(target_ip, ports, max_threads=100, timeout=2):
         print(f"Protocol: {result['protocol_name']}")
         print(f"Service: {result['service_name']}")
         if result['banner']:
-            print(f"Banner: {result['banner']}")
+            print(f"Banner: \"{result['banner']}\"")
         print(f"State: {'Open' if result['is_open'] else 'Closed'}\n")
 
     end_time = time()
