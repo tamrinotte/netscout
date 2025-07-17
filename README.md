@@ -29,9 +29,9 @@ __-h, --help:__ Displays the help message.
 
 __ip_address:__ Target IP address (e.g., 10.10.10.10 or 192.168.1.0/24).
 
-__--port PORT:__ Port number (e.g., 1005).
+__-p PORT, --port PORT:__ Port number (e.g., 1005).
 
-__--port-range PORT:__ Port range (e.g., 0-4000).
+__-pr MIN-MAX --port-range MIN-MAX:__ Port range (e.g., 0-4000).
 
 __-st:__ Scan for open TCP ports on the target.
 
@@ -47,16 +47,16 @@ __-sa:__ Perform an ARP scan to discover hosts on the local network.
        netscout 10.10.10.10 -st
 
 2)
-       netscout 10.10.10.10 -st --port 3306
+       netscout 10.10.10.10 -st -p 3306
 
 3)
-       netscout 10.10.10.10 -st --port-range 0-4000
+       netscout 10.10.10.10 -st -pr 0-4000
 
 4)
        netscout 10.10.10.10/24 -sa
 
 5)
-       netscout 10.10.10.10 -su --port-range 0-4000
+       netscout 10.10.10.10 -su -pr 0-4000
 
 ---
 
@@ -91,9 +91,9 @@ __-h, --help:__ Yardım mesajını görüntüler.
 
 __ip_address:__ Hedef IP adresi (ör. 10.10.10.10 veya 192.168.1.0/24).
 
-__--port PORT:__ Bağlantı noktası numarası (ör. 1005).
+__-p PORT, --port PORT:__ Bağlantı noktası numarası (ör. 1005).
 
-__--port-range PORT:__ Bağlantı noktası aralığı (ör. 0-4000).
+__-pr MIN-MAX, --port-range MIN-MAX:__ Bağlantı noktası aralığı (ör. 0-4000).
 
 __-st:__ Hedefteki açık TCP bağlantı noktalarını tarayın.
 
@@ -109,14 +109,13 @@ __-sa:__ Yerel ağdaki ana bilgisayarları keşfetmek için bir ARP taraması ge
        netscout 10.10.10.10 -st
 
 2)
-       netscout 10.10.10.10 -st --port 3306
+       netscout 10.10.10.10 -st -p 3306
 
 3)
-       netscout 10.10.10.10 -st --port-range 0-4000
+       netscout 10.10.10.10 -st -pr 0-4000
 
 4)
        netscout 10.10.10.10/24 -sa
 
 5)
-       netscout 10.10.10.10 -su --port-range 0-4000
-
+       netscout 10.10.10.10 -su -pr 0-4000

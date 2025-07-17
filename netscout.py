@@ -83,7 +83,6 @@ class NetScout:
         if self.is_udp_scan_requested:
             self.perform_udp_scan()
 
-
 ##############################
 
 # HELPER FUNCTIONS
@@ -115,8 +114,8 @@ def main():
     parser = ArgumentParser(description="NetScout: Port & ARP Scanner")
     parser.add_argument("ip_address", help="Target IP address (e.g., 10.10.10.10 or 192.168.1.0/24).")
     port_group = parser.add_mutually_exclusive_group(required=False)
-    port_group.add_argument("--port", type=int, help="Target port (e.g., 22).")
-    port_group.add_argument("--port-range", help="Target port range (e.g., 0-1000).")
+    port_group.add_argument("-p", "--port", type=int, help="Target port (e.g., 22).")
+    port_group.add_argument("-pr", "--port-range", help="Target port range (e.g., 0-1000).")
     scan_group = parser.add_mutually_exclusive_group(required=False)
     scan_group.add_argument('-st', action="store_true", help="Scan for open TCP ports on the target.")
     scan_group.add_argument('-sa', action="store_true", help="Perform an ARP scan to discover hosts on the local network.")
