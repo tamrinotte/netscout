@@ -18,7 +18,8 @@ _services = {}
 _services_loaded = False
 _services_lock = Lock()
 _probes = None
-base_dir = base_dir = Path(Path(__file__), "_internal", "data")
+base_dir = base_dir = Path(Path(__file__).parent.parent, "data")
+# base_dir = base_dir = Path("/opt/netscout/_internal/data/")
 service_names_port_numbers_file_path = Path(base_dir, "service-names-port-numbers.csv")
 service_probes_file_path = Path(base_dir, "service-probes.json")
 
@@ -29,6 +30,8 @@ service_probes_file_path = Path(base_dir, "service-probes.json")
 ##############################
 
 def load_iana_services(path=service_names_port_numbers_file_path):
+    debug(f"Base dir path = {base_dir}")
+    debug(f"Service names port numbers file path = {service_names_port_numbers_file_path}")
     global _services, _services_loaded
     with _services_lock:
         if _services_loaded:
