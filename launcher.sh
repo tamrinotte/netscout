@@ -1,1 +1,0 @@
-/opt/netscout/netscout $1

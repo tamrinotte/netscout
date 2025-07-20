@@ -1,3 +1,6 @@
+# This Python file uses the following encoding: utf-8
+
+# MODULES AND/OR LIBRARIES
 from socket import socket, AF_INET, SOCK_DGRAM, timeout as sockettimeout
 from ipaddress import ip_address
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -7,6 +10,12 @@ from modules.logging_config import debug, info, error
 from modules.privileges import check_root_privileges
 from modules.icmp_listener import icmp_listener
 from modules.service_recon import lookup_service_name
+
+##############################
+
+# UDP SCAN PORT
+
+##############################
 
 def run_udp_scan_port(target_ip, port, timeout=3, probe_payload=b''):
     protocol_name = 'udp'
@@ -38,6 +47,11 @@ def run_udp_scan_port(target_ip, port, timeout=3, probe_payload=b''):
         error(f"UDP scan error on port {port}: {e}")
         return None
 
+##############################
+
+# UDP SCAN
+
+##############################
 
 def run_udp_scan(target_ip, ports, max_threads=100, timeout=3, quiet_timeout=2, max_wait=10):
     check_root_privileges()
@@ -111,11 +125,11 @@ def run_udp_scan(target_ip, ports, max_threads=100, timeout=3, quiet_timeout=2, 
                 print(f"UDP reply: {result['response']}")
             print("State: Open\n")
 
-    if closed_ports_list:
-        debug("UDP ports closed (received ICMP Port Unreachable):")
-        for p in closed_ports_list:
-            debug(f"Port: {p}")
-        print()
+    # if closed_ports_list:
+    #     debug("UDP ports closed (received ICMP Port Unreachable):")
+    #     for p in closed_ports_list:
+    #         debug(f"Port: {p}")
+    #     print()
 
     if open_filtered_ports:
         print("UDP ports open|filtered (no response):")

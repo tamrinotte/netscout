@@ -1,12 +1,12 @@
 # This Python file uses the following encoding: utf-8
 
 # MODULES AND/OR LIBRARIES
-from logging import debug, info, error
-from modules.privileges import check_root_privileges
 from ipaddress import ip_network, AddressValueError, NetmaskValueError
 from sys import exit as sysexit
 from scapy.all import ARP, Ether, srp
 from time import time
+from logging import debug, info, error
+from modules.privileges import check_root_privileges
 
 ##############################
 

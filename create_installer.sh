@@ -1,67 +1,85 @@
-#!/usr/bin/env bash
+#!/usr/bin/bash
 
-set -euo pipefail
+main() {
+    declare_variables
+    purge_the_app
+    delete_the_old_files
+    create_a_new_executable_file
+    package_the_tool
+    create_installer
+    start_the_installer
+    print_info_message "Installation complete."
+}
 
-# Variables
-APP_NAME="netscout"
-VERSION="0.1.0"
-USERNAME="${SUDO_USER:-${USER}}"
-BUILD_DIRS=("dist" "build" "package")
-INSTALLER="${APP_NAME}.deb"
-
-# Function to print status messages
-function info() {
+print_info_message() {
     echo -e "\e[1;34m[INFO]\e[0m $1"
 }
 
-# Purge existing installation if present
-info "Purging existing installation of ${APP_NAME} (if installed)..."
-if dpkg -l | grep -q "^ii  ${APP_NAME} "; then
-    sudo apt purge --autoremove -y "${APP_NAME}"
-else
-    info "No existing installation found."
-fi
+declare_variables() {
+    app_name="netscout"
+    version="0.1.0"
+    username=$USER
+    build_dirs=("dist" "build" "package")
+    installer="${app_name}.deb"
+    package_base_dir="package"
+    package_opt_dir="$package_base_dir/opt"
+    package_usr_bin_dir="$package_base_dir/usr/bin"
+}
 
-# Clean old build artifacts
-for dir in "${BUILD_DIRS[@]}"; do
-    if [[ -d "$dir" ]]; then
-        info "Removing existing directory: $dir"
-        sudo rm -rf "$dir"
+purge_the_app() {
+    print_info_message "Purging existing installation of ${app_name} (if installed)..."
+    if dpkg -l | grep -q "^ii  ${app_name} "; then
+        sudo apt purge --autoremove -y "${app_name}"
+    else
+        print_info_message "No existing installation found."
     fi
-done
+}
 
-if [[ -f "$INSTALLER" ]]; then
-    info "Removing existing installer: $INSTALLER"
-    sudo rm -f "$INSTALLER"
-fi
+delete_the_old_files() {
+    for dir in "${build_dirs[@]}"; do
+        if [[ -d "$dir" ]]; then
+            print_info_message "Removing existing directory: $dir"
+            sudo rm -rf "$dir"
+        fi
+    done
 
-# Create executable
-info "Creating standalone executable using PyInstaller..."
-pyinstaller $APP_NAME.spec
+    if [[ -f "$installer" ]]; then
+        print_info_message "Removing existing installer: $installer"
+        sudo rm -f "$installer"
+    fi
+}
 
-# Setup package structure
-info "Creating package directory hierarchy..."
-mkdir -p "package/opt"
-mkdir -p "package/usr/bin"
+create_a_new_executable_file() {
+    print_info_message 'Creating the executable file...'
+    pyinstaller $app_name.spec
+}
 
-# Copy required files and folders into the package
-echo 'Copying the executable application into package/opt/'
-sudo cp -r dist/netscout package/opt/
+package_the_tool() {
+    # Create a directory hierarchy to package your application
+    print_info_message "Creating package directory hierarchy..."
+    mkdir -p $package_opt_dir
+    mkdir -p $package_usr_bin_dir
 
-echo 'Copying the launcher file into package/usr/bin/'
-ln -s /opt/netscout/netscout package/usr/bin/netscout
+    # Copy required files and folders into the package
+    print_info_message "Copying the executable application into $package_opt_dir"
+    sudo cp -r dist/netscout $package_opt_dir
+    print_info_message "Creating a symbolink to $$package_usr_bin_dir/$app_name"
+    ln -s /opt/netscout/netscout "$package_usr_bin_dir/$app_name"
 
-# Set permissions and ownership
-info "Setting permissions and ownership for package directory..."
-sudo chmod 755 -R "package/"
-sudo chown "${USERNAME}:${USERNAME}" -R "package/"
+    # Set the permissions and file ownerships
+    print_info_message "Setting permissions and ownership for package directory..."
+    sudo chmod 755 -R $package_base_dir
+    sudo chown "${username}:${username}" -R $package_base_dir
+}
 
-# Build Debian installer with FPM
-info "Creating Debian installer with FPM..."
-fpm -C "package" -s dir -t deb -n "${APP_NAME}" -v "${VERSION}" -p "${INSTALLER}" --after-install "post_install_script.sh"
+create_installer() {
+    print_info_message 'Creating the installer...'
+    fpm -C "package" -s dir -t deb -n "${app_name}" -v "${version}" -p "${installer}" --after-install post_install_script.sh
+}
 
-# Install generated package
-info "Installing the new ${APP_NAME} package..."
-sudo dpkg -i "${INSTALLER}"
+start_the_installer() {
+    print_info_message "Installing the new ${app_name} app."
+    sudo dpkg -i "${installer}"
+}
 
-info "Installation complete."
+main

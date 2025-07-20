@@ -18,9 +18,9 @@ _services = {}
 _services_loaded = False
 _services_lock = Lock()
 _probes = None
-base_dir = Path(__file__).parent.parent
-service_names_port_numbers_file_path = Path(base_dir, "data", "service-names-port-numbers.csv")
-service_probes_file_path = Path(base_dir, "data", "service-probes.json")
+base_dir = base_dir = Path(Path(__file__), "_internal", "data")
+service_names_port_numbers_file_path = Path(base_dir, "service-names-port-numbers.csv")
+service_probes_file_path = Path(base_dir, "service-probes.json")
 
 ##############################
 
@@ -65,20 +65,15 @@ def load_iana_services(path=service_names_port_numbers_file_path):
 
 def lookup_service_name(port, protocol="tcp"):
     protocol = protocol.lower()
-
-    # 1. Try system-level getservbyport
     try:
-        service = getservbyport(port, protocol)
-        debug(f"Resolved service via getservbyport: {service} on port {port}/{protocol}")
+        load_iana_services()
+        service = _services.get((port, protocol), "unknown")
+        debug(f"Resolved service via IANA services: {service} on port {port}/{protocol}")
         return service
     except OSError:
         pass
-
-    # 2. Try loaded IANA service names
-    load_iana_services()
-    service = _services.get((port, protocol), "unknown")
-    debug(f"Resolved service via IANA services: {service} on port {port}/{protocol}")
-    return service
+    except Exception as e:
+        error(f"Error: {e}")
 
 ##############################
 
