@@ -3,16 +3,15 @@
 main() {
     declare_variables
     set_up_file_ownerships
-    app_name="netscout"
 }
 
 declare_variables() {
     username=${SUDO_USER:-${USER}}
+    app_name="netscout"
 }
 
 set_up_file_ownerships() {
-    chown -R $username:$username "/opt/$appname/"
-    chown $username:$username "/usr/bin/$appname"
+    chown -R $username:$username "/opt/$app_name/"
 }
 
 main
