@@ -8,12 +8,23 @@ import (
 	"time"
 )
 
+// ##############################
+//
+// # CONSTANTS
+//
+// ##############################
+
 const (
 	ICMPTypeDestinationUnreachable = 3
 	ICMPCodePortUnreachable        = 3
 )
 
-// ListenICMP listens for ICMP Port Unreachable messages and reports closed UDP ports
+// ##############################
+//
+// # ICMP LISTENER
+//
+// ##############################
+
 func ListenICMP(targetIP string, closedCh chan<- int, stop <-chan struct{}, wg *sync.WaitGroup) {
     defer wg.Done()
 
@@ -40,22 +51,22 @@ func ListenICMP(targetIP string, closedCh chan<- int, stop <-chan struct{}, wg *
                 continue
             }
 
-            fmt.Printf("[DEBUG] Received ICMP packet from %s (%d bytes)\n", addr.String(), n)
+            // fmt.Printf("[DEBUG] Received ICMP packet from %s (%d bytes)\n", addr.String(), n)
 
 			// With this:
 			if addr.String() != targetIP {
-				fmt.Printf("[DEBUG] Skipping ICMP from unexpected IP: %s\n", addr.String())
+				// fmt.Printf("[DEBUG] Skipping ICMP from unexpected IP: %s\n", addr.String())
 				continue
 			}
 
             if n < 8+20+4 {
-                fmt.Printf("[DEBUG] Packet too short (%d bytes) for ICMP + IP + UDP headers\n", n)
+                // fmt.Printf("[DEBUG] Packet too short (%d bytes) for ICMP + IP + UDP headers\n", n)
                 continue
             }
 
             icmpType := buf[0]
             icmpCode := buf[1]
-            fmt.Printf("[DEBUG] ICMP Type: %d, Code: %d\n", icmpType, icmpCode)
+            // fmt.Printf("[DEBUG] ICMP Type: %d, Code: %d\n", icmpType, icmpCode)
 
             if icmpType != ICMPTypeDestinationUnreachable || icmpCode != ICMPCodePortUnreachable {
                 continue
@@ -64,22 +75,24 @@ func ListenICMP(targetIP string, closedCh chan<- int, stop <-chan struct{}, wg *
             ipHdrLen := int(buf[8]&0x0F) * 4
             udpStart := 8 + ipHdrLen
             if n < udpStart+4 {
-                fmt.Printf("[DEBUG] Packet too short (%d bytes) for embedded UDP header\n", n)
+                // fmt.Printf("[DEBUG] Packet too short (%d bytes) for embedded UDP header\n", n)
                 continue
             }
 
             // For better debugging print raw bytes of embedded IP header and UDP header
-            fmt.Printf("[DEBUG] Embedded IP header bytes: % x\n", buf[8:8+ipHdrLen])
-            fmt.Printf("[DEBUG] Embedded UDP header bytes: % x\n", buf[udpStart:udpStart+8])
+            // fmt.Printf("[DEBUG] Embedded IP header bytes: % x\n", buf[8:8+ipHdrLen])
+            // fmt.Printf("[DEBUG] Embedded UDP header bytes: % x\n", buf[udpStart:udpStart+8])
 
             dstPort := int(binary.BigEndian.Uint16(buf[udpStart+2 : udpStart+4]))
-            fmt.Printf("[DEBUG] Parsed destination UDP port: %d\n", dstPort)
+            // fmt.Printf("[DEBUG] Parsed destination UDP port: %d\n", dstPort)
 
             select {
             case closedCh <- dstPort:
-                fmt.Printf("[DEBUG] Sent port %d to closedCh\n", dstPort)
+                // fmt.Printf("[DEBUG] Sent port %d to closedCh\n", dstPort)
+                continue
             default:
-                fmt.Printf("[DEBUG] closedCh full, dropped port %d\n", dstPort)
+                // fmt.Printf("[DEBUG] closedCh full, dropped port %d\n", dstPort)
+                continue
             }
         }
     }

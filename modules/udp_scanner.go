@@ -1,3 +1,7 @@
+// Note: You  most recently foundout that the problem were facing was a 
+// race condition problem that was rising from poor usage of goroutines.
+// After you replaced goroutines with a regular old loop, false positives are disappeared.
+// TODO: You need to utilize goroutines correctly to increase the tools performance.
 package modules
 
 import (
@@ -7,7 +11,12 @@ import (
 	"time"
 )
 
-// UDPScanResult stores scanning info for a UDP port
+// ##############################
+//
+// # CUSTOM DATA TYPE
+//
+// ##############################
+
 type UDPScanResult struct {
 	Port        int
 	ServiceName string
@@ -15,7 +24,12 @@ type UDPScanResult struct {
 	UDPResponse string
 }
 
-// scanUDPPort sends an empty UDP packet and waits up to timeout for any reply.
+// ##############################
+//
+// # SCAN A PORT
+//
+// ##############################
+
 func scanUDPPort(target string, port int, timeout time.Duration) UDPScanResult {
 	addr := fmt.Sprintf("%s:%d", target, port)
 	service := LookupServiceName(port, "udp")
@@ -38,6 +52,12 @@ func scanUDPPort(target string, port int, timeout time.Duration) UDPScanResult {
 	}
 	return res
 }
+
+// ##############################
+//
+// # SCAN PORTS
+//
+// ##############################
 
 func RunUDPScan(
 	target string,

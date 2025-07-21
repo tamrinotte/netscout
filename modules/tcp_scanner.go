@@ -58,6 +58,12 @@ func scanTcpPort(target string, port int, timeout time.Duration) TcpScanResult {
 // ##############################
 
 func RunTcpScan(target string, ports []int, maxThreads int) {
+	// Load IANA service name-port mapping before any TCP scan
+	csvPath := "/opt/netscout/data/service-names-port-numbers.csv"
+	if err := LoadIanaServices(csvPath); err != nil {
+		fmt.Printf("[!] Could not load service names CSV (%s): %v\n", csvPath, err)
+	}
+
 	fmt.Println("=== TCP Scan ===")
 	fmt.Printf("[*] Target: %s\n", target)
 

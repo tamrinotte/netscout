@@ -137,12 +137,6 @@ func main() {
 	}
 
 	if *tcpScan {
-		// Load IANA service name-port mapping before any TCP scan
-		csvPath := "data/service-names-port-numbers.csv"
-		if err := modules.LoadIanaServices(csvPath); err != nil {
-			fmt.Printf("[!] Could not load service names CSV (%s): %v\n", csvPath, err)
-		}
-
 		modules.RunTcpScan(*ipAddress, ports, maxThreads)
 	}
 

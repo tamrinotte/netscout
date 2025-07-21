@@ -134,7 +134,7 @@ func LoadProbes(path string) ([]Probe, error) {
 // ##############################
 
 func FindProbe(port int, protocol string) *Probe {
-	probes, err := LoadProbes("data/service-probes.json")
+	probes, err := LoadProbes("/opt/netscout/data/service-probes.json")
 	if err != nil {
 		return nil
 	}
